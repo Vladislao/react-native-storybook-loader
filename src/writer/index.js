@@ -19,6 +19,8 @@ const formatter = (files, frms, separator) => {
   return formatted.join(separator);
 };
 
+const shortname = v => v.match(/([^\/]*)\/*$/)[1];
+
 const template = files =>
   `// Auto-generated file created by react-native-storybook-loader
 // Do not edit.
@@ -26,11 +28,17 @@ const template = files =>
 // https://github.com/elderfo/react-native-storybook-loader.git
 
 function loadStories() {
-${formatter(files, file => `\trequire('${file}');`, '\n')}
+  const components = {};
+${formatter(
+  files,
+  file => `  components['${shortname(file)}'] = require('${file}');`,
+  '\n'
+)}
+  return components;
 }
 
 const stories = [
-${formatter(files, file => `\t'${file}'`, ',\n')}
+${formatter(files, file => `  '${file}'`, ',\n')}
 ];
 
 module.exports = {
